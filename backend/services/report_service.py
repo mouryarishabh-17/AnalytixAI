@@ -183,8 +183,11 @@ class ReportService:
                 
                 for name, path in charts.items():
                     # clean path (absolute paths passed from main.py, or relative from legacy)
-                    # Safe to use lstrip('/') for sanity if it was a URL path, but os.path.join handled defaults.
-                    local_path = path.lstrip('/')
+                    # Fix for Linux environments: Don't strip leading slash if it's an absolute path
+                    if os.path.isabs(path):
+                        local_path = path
+                    else:
+                        local_path = path.lstrip('/')
                     
                     if os.path.exists(local_path):
                         doc.set_font("Arial", 'B', 12)
