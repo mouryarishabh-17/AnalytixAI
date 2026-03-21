@@ -1,0 +1,287 @@
+/* ============================================
+   DESIGN SYSTEM EXTENSION (REFERENCE IMAGE)
+   ============================================ */
+:root {
+    /* Reference Palette */
+    --ref-green: #10B981;
+    --ref-purple: #A855F7;
+    --ref-blue: #3B82F6;
+    --ref-orange: #F59E0B;
+    --ref-pink: #F472B6;
+
+    /* Layout */
+    --radius-xl: 1.25rem;
+}
+
+/* ============================================
+   DASHBOARD REFERENCE LAYOUT
+   ============================================ */
+.dashboard-grid.ref-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--spacing-md);
+    grid-template-rows: auto;
+}
+
+@media (max-width: 1200px) {
+    .dashboard-grid.ref-layout {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid.ref-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Card Specifics */
+.card.wide-card {
+    grid-column: span 1;
+}
+
+.card.tall-card {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.card.full-width-card {
+    grid-column: 1 / -1;
+}
+
+/* Chart Containers */
+.chart-container-sm {
+    height: 180px;
+    width: 100%;
+}
+
+.chart-container-lg {
+    height: 300px;
+    width: 100%;
+}
+
+.donut-container {
+    position: relative;
+    height: 180px;
+    width: 180px;
+    margin: 0 auto;
+}
+
+.donut-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.big-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.small-text {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* Legend */
+.chart-legend {
+    display: flex;
+    gap: var(--spacing);
+    margin-top: var(--spacing);
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot-sm {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dot.green {
+    background-color: var(--ref-green);
+}
+
+.dot.purple {
+    background-color: var(--ref-purple);
+}
+
+.dot.blue {
+    background-color: var(--ref-blue);
+}
+
+.dot.orange {
+    background-color: var(--ref-orange);
+}
+
+.dot.pink {
+    background-color: var(--ref-pink);
+}
+
+/* Stats List */
+.stats-list-container {
+    width: 100%;
+    margin-top: var(--spacing-md);
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-xs) 0;
+    font-size: 0.875rem;
+    border-bottom: 1px dashed var(--divider-color);
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.stat-row .date {
+    color: var(--text-secondary);
+    flex: 1;
+    margin-left: var(--spacing-sm);
+}
+
+.stat-row .val {
+    font-weight: 600;
+}
+
+/* User List (Answered Chatbot) */
+.user-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing);
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.user-item:last-child {
+    border-bottom: none;
+}
+
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--gray-200);
+}
+
+.user-details {
+    flex: 1;
+}
+
+.user-details h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.user-details p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+}
+
+/* Badges */
+.status-badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--ref-green);
+}
+
+.time-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.time-badge.warning {
+    color: var(--ref-orange);
+}
+
+.time-badge.danger {
+    color: var(--ref-pink);
+}
+
+/* Pink/Red for 23m */
+.time-badge.success {
+    color: var(--ref-green);
+}
+
+/* 15m */
+
+/* Header Actions */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing);
+}
+
+.select-sm {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    font-size: 0.8rem;
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.mt-md {
+    margin-top: var(--spacing-md);
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.column {
+    flex-direction: column;
+}
+
+.text-sm {
+    font-size: 0.8rem;
+}

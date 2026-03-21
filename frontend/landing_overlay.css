@@ -1,0 +1,362 @@
+/* Landing Overlay Styles - Scoped to avoid Dashboard conflicts */
+#landing-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #f8fafc;
+    /* Keep light background from landing page */
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: opacity 0.8s ease-in-out;
+}
+
+#landing-overlay.fade-out-overlay {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Blobs */
+.landing-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+    opacity: 0.5;
+    animation: float 10s infinite alternate;
+}
+
+.blob-1 {
+    width: 600px;
+    height: 600px;
+    background: #c084fc;
+    top: -150px;
+    left: -150px;
+}
+
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background: #60a5fa;
+    bottom: -100px;
+    right: -100px;
+    animation-delay: -5s;
+}
+
+.blob-3 {
+    width: 400px;
+    height: 400px;
+    background: #fcd34d;
+    top: 30%;
+    left: 40%;
+    animation-duration: 15s;
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(30px, 50px) scale(1.1);
+    }
+}
+
+/* Particles Canvas */
+#particles-landing {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Hero Content */
+.landing-hero {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+.landing-hero.fade-out-content {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+/* Main Landing Logo */
+.landing-logo-container {
+    margin-bottom: 0.5rem;
+    line-height: normal;
+    /* Allow natural height */
+    min-height: 120px;
+    /* Use min-height instead of fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    /* Ensure nothing clips */
+}
+
+.landing-logo-text {
+    font-size: 6rem;
+    padding: 0.5rem;
+    /* prevent clipping of ascenders/descenders with bg-clip */
+    margin: -0.5rem;
+    /* compensate for padding layout shift */
+    font-weight: 800;
+    /* Match Dashboard Sidebar Logo weight */
+    background: linear-gradient(to right, #3B82F6, #A855F7, #EF4444, #F59E0B, #3B82F6);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 3s linear infinite;
+    display: inline-block;
+    transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    white-space: nowrap;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translateZ(0);
+    /* Force GPU */
+    backface-visibility: hidden;
+}
+
+/* Animation Class for Logo flying to Sidebar Header position */
+/* Animation Class for Logo flying to Sidebar Header position */
+/* .logo-fly-to-sidebar removed - handled by JS for perfect FLIP animation */
+.logo-fly-transition {
+    transition: all 0.8s ease-in-out;
+    z-index: 10000;
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+/* Typing Text */
+.landing-subtext {
+    font-size: 2.5rem;
+    color: #475569;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+    font-family: 'Inter', sans-serif;
+}
+
+.typing-cursor::after {
+    content: '|';
+    animation: blink 1s infinite;
+    color: #3b82f6;
+    margin-left: 5px;
+    font-weight: 300;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Badge */
+.landing-badge {
+    font-size: 0.8rem;
+    color: #4f46e5;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(5px);
+    padding: 6px 16px;
+    border-radius: 50px;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Landing Description */
+.landing-desc {
+    font-size: 1.15rem;
+    color: #475569;
+    max-width: 600px;
+    margin-bottom: 3rem;
+    line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+}
+
+/* CTA Buttons */
+.landing-cta-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.landing-btn {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Inter', sans-serif;
+}
+
+.landing-btn-primary {
+    background: #1e293b;
+    color: white;
+    box-shadow: 0 10px 25px rgba(30, 41, 59, 0.3);
+}
+
+.landing-btn-primary:hover {
+    background: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.landing-btn-secondary {
+    background: rgba(255, 255, 255, 0.5);
+    color: #1e293b;
+    border: 1px solid white;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.landing-btn-secondary:hover {
+    background: white;
+    transform: translateY(-2px);
+}
+
+/* --- LOGIN MODAL Styles --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 20000;
+    /* Above everything */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    width: 400px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    font-family: 'Inter', sans-serif;
+}
+
+.modal-overlay.active .modal-card {
+    transform: scale(1);
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #475569;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    outline: none;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.input-group input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.btn-login-modal {
+    width: 100%;
+    padding: 1rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-login-modal:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+/* Close Modal Button */
+.close-modal-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.close-modal-btn:hover {
+    background: #f1f5f9;
+    color: #ef4444;
+    transform: rotate(90deg);
+}

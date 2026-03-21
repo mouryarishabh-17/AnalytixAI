@@ -1,0 +1,86 @@
+# Core Python Ignores
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual Environments (Anywhere)
+.venv/
+venv/
+env/
+ENV/
+backend/.venv/
+backend/venv/
+backend/env/
+backend/ENV/
+
+# Environment Variables (Anywhere)
+.env
+backend/.env
+.env.local
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Databases
+*.db
+*.sqlite3
+backend/analytix.db
+
+# Logs & Output Streams
+*.log
+logs/
+backend/logs/
+
+# Directories to strictly exclude (Archives, Big Data, Outputs)
+_ARCHIVE/
+archive/
+frontend/archive/
+AnalytixAI Data/
+demo_data/
+backend/demo_data/
+charts/
+backend/charts/
+reports/
+backend/reports/
+ppt_assets/
+backend/ppt_assets/
+
+# Document & Presentation outputs
+*.docx
+*.pptx
+*.pdf
+
+# Unused Text Output Files (Keep necessary text files)
+*.txt
+!requirements.txt
+!emp_cols.txt
+!render.yaml
+
+# Testing & Data Validation Scripts (Not needed for deployment)
+check_*.py
+review_*.py
+fix_*.py
+verify_*.py
+detailed_*.py
+test_*.py
+extract_*.py
+full_*.py
+generate_final_demo_data.py
+update_docx.py
+read_docx.py
+
+# Unused Batch Scripts
+archive_old_files.bat
+cleanup.bat

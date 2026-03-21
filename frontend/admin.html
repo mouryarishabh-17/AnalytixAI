@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AnalytixAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <!-- Reuse main styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --sidebar-width: 260px;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(17, 24, 39, 0.95);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100vh;
+            position: fixed;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .table-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .badge-inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .badge-pro {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .badge-free {
+            background: rgba(107, 114, 128, 0.2);
+            color: #9ca3af;
+        }
+
+        .action-btn {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .btn-ban:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .btn-unban:hover {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            color: #10b981;
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div style="margin-bottom: 3rem;">
+            <h2
+                style="font-weight: 700; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                AnalytixAI Admin</h2>
+        </div>
+
+        <nav style="flex: 1;">
+            <a href="#" class="nav-item active"
+                style="display: flex; align-items: center; gap: 10px; padding: 12px; color: white; background: rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 0.5rem; text-decoration: none;">
+                <i class="fas fa-users"></i> Users
+            </a>
+            <a href="index.html" class="nav-item"
+                style="display: flex; align-items: center; gap: 10px; padding: 12px; color: var(--text-muted); text-decoration: none;">
+                <i class="fas fa-home"></i> Back to App
+            </a>
+        </nav>
+
+        <div style="padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div
+                    style="width: 32px; height: 32px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    A</div>
+                <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Administrator</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Super User</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <h1 style="margin-bottom: 2rem;">Dashboard Overview</h1>
+
+        <!-- Stats -->
+        <div class="stats-grid" id="stats-container">
+            <!-- Loading stats... -->
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2>User Management</h2>
+            <button class="action-btn" onclick="loadUsers()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Plan</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body">
+                    <!-- Users loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE_URL = "http://127.0.0.1:8000";
+        const token = localStorage.getItem('access_token');
+
+        // Check Auth
+        if (!token) {
+            window.location.href = 'index.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadUsers();
+        });
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.status === 403) {
+                    alert('Access Denied: Admin privileges required.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                const stats = await response.json();
+
+                document.getElementById('stats-container').innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700;">${stats.total_users}</div>
+                            <div style="color: var(--text-muted);">Total Users</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;"><i class="fas fa-crown"></i></div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700;">${stats.pro_users}</div>
+                            <div style="color: var(--text-muted);">Pro Subscribers</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;"><i class="fas fa-chart-line"></i></div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700;">${stats.total_analyses}</div>
+                            <div style="color: var(--text-muted);">Total Analyses</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6;"><i class="fas fa-user-plus"></i></div>
+                        <div>
+                            <div style="font-size: 2rem; font-weight: 700;">${stats.new_users_24h}</div>
+                            <div style="color: var(--text-muted);">New (24h)</div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Stats error:', error);
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/users?limit=50`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await response.json();
+
+                const tbody = document.getElementById('users-table-body');
+                tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 30px; height: 30px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">
+                                ${user.name.charAt(0).toUpperCase()}
+                            </div>
+                            ${user.name}
+                            ${user.is_verified ? '<i class="fas fa-check-circle" style="color: #10b981; font-size: 0.8rem;" title="Verified"></i>' : ''}
+                        </td>
+                        <td style="color: var(--text-muted);">${user.email}</td>
+                        <td><span class="badge ${user.plan === 'pro' ? 'badge-pro' : 'badge-free'}">${user.plan.toUpperCase()}</span></td>
+                        <td><span class="badge ${user.is_active !== false ? 'badge-active' : 'badge-inactive'}">${user.is_active !== false ? 'Active' : 'Banned'}</span></td>
+                        <td style="font-size: 0.9rem; color: var(--text-muted);">${new Date(user.created_at).toLocaleDateString()}</td>
+                        <td>
+                            <button class="action-btn ${user.is_active !== false ? 'btn-ban' : 'btn-unban'}" 
+                                    onclick="toggleStatus('${user._id}', ${user.is_active !== false})">
+                                ${user.is_active !== false ? 'Ban' : 'Unban'}
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Users error:', error);
+            }
+        }
+
+        async function toggleStatus(userId, currentStatus) {
+            if (!confirm(`Are you sure you want to ${currentStatus ? 'Ban' : 'Unban'} this user?`)) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin/users/${userId}/toggle-status`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    loadUsers(); // Reload table
+                    loadStats(); // Reload stats if needed
+                } else {
+                    alert('Failed to update status');
+                }
+            } catch (error) {
+                console.error('Action error:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>

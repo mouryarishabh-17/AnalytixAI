@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytix AI - Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --primary: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- BLOB BACKGROUND --- */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.5;
+            animation: float 10s infinite alternate;
+        }
+
+        .blob-1 {
+            width: 600px;
+            height: 600px;
+            background: #c084fc;
+            top: -150px;
+            left: -150px;
+        }
+
+        .blob-2 {
+            width: 500px;
+            height: 500px;
+            background: #60a5fa;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        .blob-3 {
+            width: 400px;
+            height: 400px;
+            background: #fcd34d;
+            top: 30%;
+            left: 40%;
+            animation-duration: 15s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(30px, 50px) scale(1.1);
+            }
+        }
+
+        /* Canvas */
+        #particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Navbar */
+        nav {
+            position: relative;
+            z-index: 10;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Rainbow Logo Style */
+        .logo-text {
+            background: linear-gradient(to right, #3B82F6, #A855F7, #EF4444, #F59E0B, #3B82F6);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .nav-links button {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            color: var(--text-primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 1rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-links button:hover {
+            background: white;
+            transform: translateY(-1px);
+        }
+
+        .nav-links .btn-primary {
+            background: #1e293b;
+            color: white;
+            border: none;
+        }
+
+        .nav-links .btn-primary:hover {
+            background: #0f172a;
+        }
+
+        /* Hero Content */
+        .hero {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+            margin-top: -2rem;
+        }
+
+        .badge {
+            font-size: 0.8rem;
+            color: #4f46e5;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(5px);
+            padding: 6px 16px;
+            border-radius: 50px;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Typing Effect Styles */
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s infinite;
+            color: var(--primary);
+            margin-left: 5px;
+            font-weight: 300;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .cta-btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-primary {
+            background: #1e293b;
+            color: white;
+            box-shadow: 0 10px 25px rgba(30, 41, 59, 0.3);
+        }
+
+        .cta-primary:hover {
+            background: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text-primary);
+            border: 1px solid white;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .cta-secondary:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .stats-row {
+            margin-top: 5rem;
+            display: flex;
+            gap: 5rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Transition Effect */
+        body {
+            transition: opacity 0.8s ease-in-out;
+            opacity: 1;
+        }
+
+        body.fade-out {
+            opacity: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <canvas id="particles"></canvas>
+
+    <nav>
+        <div class="logo"></div>
+        <div class="nav-links">
+            <!-- Buttons removed for transition effect -->
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="badge">
+            <i class="fas fa-rocket" style="color: #A855F7;"></i> v2.0 Released
+        </div>
+
+        <!-- Main Logo Title (No Icon Box) -->
+        <h1 style="font-size: 6rem; margin-bottom: 0.5rem; line-height: 1.1;">
+            <span class="logo-text">AnalytixAI</span>
+        </h1>
+
+        <!-- Typing Effect Sub-headline -->
+        <div style="font-size: 2.5rem; color: var(--text-secondary); margin-bottom: 2.5rem; font-weight: 300;">
+            Analyze your <span id="type-text" style="color: #3B82F6; font-weight: 700;">Data</span><span
+                class="typing-cursor"></span>
+        </div>
+
+        <p>
+            Upload your raw data files and let our AI engine instantly clean, analyze, and visualize actionable
+            insights.
+        </p>
+
+        <div class="cta-group">
+            <button class="cta-btn cta-primary" onclick="handleLogin()">
+                Start Analyzing <i class="fas fa-arrow-right"></i>
+            </button>
+            <button class="cta-btn cta-secondary">
+                <i class="fas fa-play" style="color: #EF4444;"></i> Watch Demo
+            </button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h2 style="margin-bottom: 2rem; color: var(--text-primary);">Welcome Back</h2>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" placeholder="user@analytix.ai" value="demo@analytix.ai">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" placeholder="••••••••" value="password">
+            </div>
+            <button class="btn-login" onclick="finalizeLogin()">Sign In</button>
+        </div>
+    </div>
+
+    <!-- Styles for Animation & Modal -->
+    <style>
+        .logo-header-position {
+            position: fixed;
+            top: 20px;
+            left: 40px;
+            font-size: 1.8rem !important;
+            margin: 0 !important;
+            z-index: 1000;
+            transform-origin: left top;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .fade-out-content {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: all 0.5s ease;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-login:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+    </style>
+
+    <script>
+        // --- 1. Particle System ---
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        let mouse = { x: null, y: null, radius: 150 };
+
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+        window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.size = Math.random() * 2 + 1;
+                this.color = '#1e293b';
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+
+                // Wall bounce
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+                // Mouse Attraction
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        const directionX = forceDirectionX * force * 2;
+                        const directionY = forceDirectionY * force * 2;
+                        this.x += directionX;
+                        this.y += directionY;
+                    }
+                }
+            }
+            draw() {
+                ctx.fillStyle = this.color; ctx.globalAlpha = 0.2;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+
+        const particleCount = window.innerWidth > 768 ? 120 : 60;
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, index) => {
+                p.update(); p.draw();
+
+                // Connect particles
+                for (let j = index + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x; const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(30, 41, 59, ${0.1 - dist / 1500})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                    }
+                }
+
+                // Connect to Mouse
+                if (mouse.x != null) {
+                    let dx = mouse.x - p.x;
+                    let dy = mouse.y - p.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < mouse.radius) {
+                        ctx.strokeStyle = `rgba(59, 130, 246, ${0.2 - dist / mouse.radius})`; // Blue connection
+                        ctx.lineWidth = 1;
+                        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- 2. Typing Effect ---
+        const words = ["Sales", "Finance", "Growth", "Customers", "Future"];
+        let i = 0;
+
+        function typeWriter() {
+            const element = document.getElementById("type-text");
+            const word = words[i];
+            let current = element.innerText;
+
+            if (current === word) {
+                setTimeout(deleteWriter, 2000);
+                return;
+            }
+            element.innerText = word.substring(0, current.length + 1);
+            setTimeout(typeWriter, 150);
+        }
+
+        function deleteWriter() {
+            const element = document.getElementById("type-text");
+            let current = element.innerText;
+
+            if (current === "") {
+                i = (i + 1) % words.length;
+                typeWriter();
+                return;
+            }
+            element.innerText = current.substring(0, current.length - 1);
+            setTimeout(deleteWriter, 100);
+        }
+
+        setTimeout(typeWriter, 1000);
+
+        function handleLogin() {
+            // 1. Animate Logo
+            const logo = document.querySelector('h1');
+            logo.classList.add('logo-header-position');
+
+            // 2. Fade out Hero Content
+            document.querySelector('p').classList.add('fade-out-content');
+            document.querySelector('.cta-group').classList.add('fade-out-content');
+            document.querySelector('.badge').classList.add('fade-out-content');
+            // Remove typing text
+            const typingDiv = document.querySelector('div[style*="font-size: 2.5rem"]');
+            if (typingDiv) typingDiv.classList.add('fade-out-content');
+
+            // 3. Show Modal
+            setTimeout(() => {
+                document.getElementById('login-modal').classList.add('active');
+            }, 800);
+        }
+
+        function finalizeLogin() {
+            // Button loading state
+            const btn = document.querySelector('.btn-login');
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing in...';
+
+            setTimeout(() => {
+                document.body.classList.add('fade-out'); // Final fade out
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 500);
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>

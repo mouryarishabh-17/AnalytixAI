@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnalytixAI - Data Analytics</title>
+    <link rel="stylesheet" href="style.css">
+
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Chart.js for Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="landing_overlay.css">
+</head>
+
+<body>
+    <!-- ============================================ -->
+    <!-- LANDING OVERLAY (Merged) -->
+    <!-- ============================================ -->
+    <div id="landing-overlay">
+        <canvas id="particles-landing"></canvas>
+        <div class="landing-blob blob-1"></div>
+        <div class="landing-blob blob-2"></div>
+        <div class="landing-blob blob-3"></div>
+
+        <div class="landing-hero">
+            <div class="landing-badge">
+                <i class="fas fa-rocket" style="color: #A855F7;"></i> v2.0 Released
+            </div>
+
+            <div class="landing-logo-container">
+                <span class="landing-logo-text" id="landing-logo">AnalytixAI</span>
+            </div>
+
+            <div class="landing-subtext">
+                Analyze your <span id="type-text" style="color: #3B82F6; font-weight: 700;">Data</span><span
+                    class="typing-cursor"></span>
+            </div>
+
+            <p class="landing-desc">
+                Upload your raw data files and let our AI engine instantly clean, analyze, and visualize actionable
+                insights.
+            </p>
+
+            <div class="landing-cta-group">
+                <button class="landing-btn landing-btn-primary" onclick="startAnalyzing()">
+                    Start Analyzing <i class="fas fa-arrow-right"></i>
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal Removed - Using Main Auth Modal -->
+    <!-- ============================================ -->
+    <!-- SIDEBAR NAVIGATION -->
+    <!-- ============================================ -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-text">AnalytixAI</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- 0. Select Domain -->
+            <a href="#" class="nav-item" data-tab="domains" onclick="resetDomainSelection()">
+                <i class="fas fa-th-large"></i>
+                <span>Select Domain</span>
+            </a>
+
+            <!-- 1. Data Sources -->
+            <a href="#" class="nav-item active" data-tab="datasources" onclick="switchTab('datasources')">
+                <i class="fas fa-database"></i>
+                <span>Data Sources</span>
+            </a>
+
+            <!-- 2. Analytics (Detailed View) -->
+            <a href="#" class="nav-item" data-tab="analytics" onclick="switchTab('analytics')">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
+            </a>
+
+            <!-- 4. Chat -->
+            <a href="#" class="nav-item" data-tab="chat" onclick="switchTab('chat')">
+                <i class="fas fa-comments"></i>
+                <span>Chat</span>
+            </a>
+
+            <!-- Admin (Hidden) -->
+            <a href="admin.html" class="nav-item" id="nav-item-admin" style="display: none; color: #f59e0b;">
+                <i class="fas fa-shield-alt"></i>
+                <span>Admin</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-profile" id="user-profile" onclick="switchTab('settings')" style="cursor: pointer;">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebar-user-name">Guest</div>
+                    <div class="user-role" id="sidebar-user-role">Free Plan</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ============================================ -->
+    <!-- MAIN CONTENT AREA -->
+    <!-- ============================================ -->
+    <main class="main-content">
+        <!-- Top Header Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <!-- Dedicated Logo for Top Navigation Mode -->
+                <div class="top-logo" id="top-logo" onclick="switchTab('datasources')" style="display: none;">
+                    <span class="logo-text">AnalytixAI</span>
+                </div>
+                <h1 class="page-title" id="page-title">Data Sources</h1>
+            </div>
+
+            <!-- Top Navigation links for Layout Choice -->
+            <nav class="top-nav-links" id="top-nav-links" style="display: none;">
+                <a href="#" class="top-nav-item active" data-tab="datasources" onclick="switchTab('datasources')">Data
+                    Sources</a>
+                <a href="#" class="top-nav-item" data-tab="analytics" onclick="switchTab('analytics')">Analytics</a>
+                <a href="#" class="top-nav-item" data-tab="chat" onclick="switchTab('chat')">Chat</a>
+            </nav>
+
+            <div class="topbar-right">
+                <!-- Layout Toggle Button -->
+                <button class="icon-btn layout-toggle" onclick="toggleLayout()" title="Change Navigation Layout"
+                    aria-label="Change Navigation Layout">
+                    <i class="fas fa-columns"></i>
+                </button>
+
+                <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Toggle Theme"
+                    aria-label="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+
+                <div class="divider-vertical"></div>
+
+                <div class="user-menu">
+                    <button class="auth-btn" id="auth-btn-login" onclick="openAuth('login')">Login</button>
+                    <button class="auth-btn" id="auth-btn-register" onclick="openAuth('register')">Register</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tab Content Container -->
+        <div class="content-wrapper">
+            <!-- ============================================ -->
+            <!-- TAB 1: DATA SOURCES (NOW PRIMARY) -->
+            <!-- ============================================ -->
+            <div id="tab-datasources" class="tab-content active">
+
+                <!-- Domain Selection -->
+                <div class="card" id="domain-selection-card">
+                    <div class="card-header">
+                        <h3>Select Data Type</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="domain-grid">
+                            <button class="domain-card" onclick="selectDomain('sales')">
+                                <i class="fas fa-chart-line"></i>
+                                <h4>Sales Data</h4>
+                                <p>Analyze sales performance and trends</p>
+                            </button>
+                            <button class="domain-card" onclick="selectDomain('finance')">
+                                <i class="fas fa-dollar-sign"></i>
+                                <h4>Finance Data</h4>
+                                <p>Track expenses and revenue</p>
+                            </button>
+                            <button class="domain-card" onclick="selectDomain('student')">
+                                <i class="fas fa-graduation-cap"></i>
+                                <h4>Student Data</h4>
+                                <p>Monitor academic performance</p>
+                            </button>
+                            <button class="domain-card" onclick="selectDomain('employee')">
+                                <i class="fas fa-users"></i>
+                                <h4>Employee Data</h4>
+                                <p>Workforce analytics and insights</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Section (Hidden initially) -->
+                <div class="card" id="upload-card" style="display: none;">
+                    <div class="card-header">
+                        <h3 id="upload-card-title">Upload File</h3>
+                        <button class="btn-back" onclick="backToDomainSelection()">
+                            <i class="fas fa-arrow-left"></i> Change Domain
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="upload-area" id="upload-area">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3>Drag & Drop your file here</h3>
+                            <p class="text-muted">or click to browse</p>
+                            <input type="file" id="file-input" accept=".csv,.xlsx,.xls"
+                                onchange="handleFileSelect(event)">
+                            <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+                                <i class="fas fa-file-upload"></i> Select File
+                            </button>
+                        </div>
+
+                        <div id="file-preview" class="file-preview" style="display: none;"></div>
+
+                        <div class="upload-actions" id="upload-actions" style="display: none;">
+                            <button class="btn btn-outline" onclick="cancelUpload()">Cancel</button>
+                            <button class="btn btn-primary" onclick="analyzeData()" id="analyze-btn">
+                                <i class="fas fa-chart-bar"></i> Analyze Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Files History List -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Your Recent Uploads</h3>
+                        <button class="btn-text" onclick="loadHistory()"><i class="fas fa-sync-alt"></i>
+                            Refresh</button>
+                    </div>
+                    <div class="card-body" id="history-list-container">
+                        <div class="empty-state">
+                            <i class="fas fa-folder-open"></i>
+                            <p>No history yet</p>
+                            <p class="text-muted">Start by choosing a data type above</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- TAB 2: ANALYTICS (Visual Insights) -->
+            <!-- ============================================ -->
+            <div id="tab-analytics" class="tab-content">
+                <div id="results-container">
+                    <div class="empty-state">
+                        <i class="fas fa-chart-pie"></i>
+                        <p>No active project loaded</p>
+                        <p class="text-muted">Upload field data in "Data Sources" to see insights here.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- TAB 4: CHAT -->
+            <!-- ============================================ -->
+            <div id="tab-chat" class="tab-content">
+
+                <div class="card chat-card">
+                    <div class="card-body">
+                        <div class="chat-container" id="chat-messages">
+                            <div class="chat-welcome">
+                                <i class="fas fa-robot"></i>
+                                <h3>Data Assistant</h3>
+                                <p>Go to "Data Sources" to upload a file first.</p>
+                            </div>
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chat-input" placeholder="Ask about your data...">
+                            <button class="btn btn-primary" id="send-btn" onclick="sendChatMessage()"><i
+                                    class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- TAB 5: SETTINGS (PROFILE) -->
+            <!-- ============================================ -->
+            <div id="tab-settings" class="tab-content">
+
+                <div class="settings-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="profile-header">
+                                <div class="profile-avatar-large"><i class="fas fa-user"></i></div>
+                                <div class="profile-text">
+                                    <h3 id="settings-name">Guest User</h3>
+                                    <p class="text-muted" id="settings-email">guest@example.com</p>
+                                </div>
+                            </div>
+                            <form id="profile-form" class="settings-form">
+                                <div class="form-row">
+                                    <div class="form-group"><label>Full Name</label><input type="text" id="input-name">
+                                    </div>
+                                    <div class="form-group"><label>Email</label><input type="email" id="input-email"
+                                            disabled></div>
+                                </div>
+                                <div class="form-group"><label>Bio</label><textarea id="input-bio" rows="3"></textarea>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="saveProfile()">Save
+                                    Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card" id="premium-upgrade-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-crown" style="color: #ffd700;"></i> Premium Upgrade</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">Unlock ML-powered Predictive Analysis, Behavioral Drivers, and
+                                Advanced Statistical Reports.</p>
+                            <div class="price-tag" style="font-size: 1.5rem; font-weight: 800; margin: 1rem 0;">$49.00
+                                <span style="font-size: 0.875rem; font-weight: 400;">/one-time</span>
+                            </div>
+                            <button class="btn btn-primary btn-block" onclick="openPaymentModal()">Upgrade to
+                                Pro</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="setting-item">
+                                <h4>Dark Mode</h4>
+                                <label class="switch">
+                                    <input type="checkbox" id="theme-switch" onchange="toggleTheme()">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <button class="btn btn-outline text-danger mt-md" onclick="handleLogout()">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="auth-modal-title">Login</h2>
+                <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="auth-form">
+                    <div class="form-group" id="name-group" style="display: none;"><label>Name</label><input type="text"
+                            id="auth-name"></div>
+                    <div class="form-group"><label>Email</label><input type="email" id="auth-email" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" id="auth-password" required>
+                        <div style="text-align: right; margin-top: 5px;">
+                            <a href="forgot-password.html" id="forgot-password-link"
+                                style="font-size: 0.8rem; color: var(--primary-color); text-decoration: none;">Forgot
+                                Password?</a>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="auth-submit-btn">Login</button>
+                </form>
+                <div class="auth-switch"><span id="auth-switch-text">Don't have an account?</span><button
+                        id="auth-switch-btn" class="btn-text" onclick="toggleAuthMode()">Register</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Secure Payment</h2>
+                <button class="modal-close" onclick="closePaymentModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="font-size: 0.875rem; color: var(--text-muted);">Amount to Pay</div>
+                    <div style="font-size: 2.5rem; font-weight: 800; color: var(--text-primary);">$49.00</div>
+                </div>
+
+                <form id="payment-form" onsubmit="handlePaymentSubmit(event)">
+                    <div class="form-group">
+                        <label>Card Number</label>
+                        <input type="text" placeholder="XXXX XXXX XXXX XXXX" required maxlength="19">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Expiry (MM/YY)</label>
+                            <input type="text" placeholder="MM/YY" required maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <input type="password" placeholder="XXX" required maxlength="3">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="pay-btn">
+                        <i class="fas fa-lock"></i> Pay & Activate Pro
+                    </button>
+                </form>
+
+                <div style="text-align: center; margin-top: 1.5rem; font-size: 0.75rem; color: var(--text-muted);">
+                    <i class="fas fa-shield-alt"></i> Encrypted AES-256 SSL Secure Connection
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapping Modal -->
+    <div id="mapping-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Column Mapping Required</h2>
+                <button class="modal-close" onclick="closeMappingModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">We couldn't automatically match all columns. Please select the correct columns
+                    below.</p>
+                <form onsubmit="handleMappingSubmit(event)">
+                    <div id="mapping-fields-container"></div>
+                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">Confirm
+                        Mapping</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="chat_markdown.js"></script>
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+</body>
+
+</html>

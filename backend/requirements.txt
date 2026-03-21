@@ -1,0 +1,20 @@
+fastapi
+uvicorn
+pandas
+numpy
+python-multipart
+pymongo
+python-jose[cryptography]
+passlib[bcrypt]
+matplotlib
+seaborn
+openpyxl
+pydantic[email]
+python-dotenv
+google-generativeai
+google-genai
+cachetools
+scikit-learn
+fpdf2
+# Email support
+aiosmtplib
