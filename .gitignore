@@ -62,6 +62,11 @@ backend/ppt_assets/
 *.pptx
 *.pdf
 
+# Markdown Files (Keep ONLY README.md)
+*.md
+!README.md
+!README
+
 # Unused Text Output Files (Keep necessary text files)
 *.txt
 !requirements.txt
