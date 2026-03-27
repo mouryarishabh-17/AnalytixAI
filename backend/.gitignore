@@ -38,6 +38,7 @@ ENV/
 
 # Project Specific
 charts/
+reports/
 logs/
 *.log
 
