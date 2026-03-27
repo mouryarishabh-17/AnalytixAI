@@ -168,7 +168,7 @@ class GeminiService:
                 
                 # Generate response using NEW API
                 response = self.client.models.generate_content(
-                    model='gemini-2.0-flash',  # Updated to 2.0 Flash (Valid until March 2026)
+                    model='gemini-3.1-flash-lite-preview',  # Updated to 3.1 Flash-Lite Preview as per March 2026 release notes
                     contents=full_prompt
                 )
                 
