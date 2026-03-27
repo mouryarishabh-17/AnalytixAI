@@ -49,8 +49,8 @@ class APIKeyRotator:
         if primary_key and primary_key != "YOUR_GEMINI_API_KEY_HERE":
             keys.append(primary_key)
         
-        # Load additional keys (GEMINI_API_KEY_1 through GEMINI_API_KEY_10)
-        for i in range(1, 11):
+        # Load additional keys (GEMINI_API_KEY_1 through GEMINI_API_KEY_5)
+        for i in range(1, 6):
             key = env_vars.get(f"GEMINI_API_KEY_{i}")
             if key and key != "YOUR_GEMINI_API_KEY_HERE":
                 keys.append(key)
