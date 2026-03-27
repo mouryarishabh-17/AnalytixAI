@@ -51,8 +51,10 @@ app.include_router(admin_router)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CHARTS_DIR = os.path.join(BASE_DIR, "charts")
+REPORTS_DIR = os.path.join(BASE_DIR, "reports")
 
 os.makedirs(CHARTS_DIR, exist_ok=True)
+os.makedirs(REPORTS_DIR, exist_ok=True)
 
 app.mount("/charts", StaticFiles(directory=CHARTS_DIR), name="charts")
 
@@ -494,44 +496,45 @@ async def chat_with_data(
 @app.get("/api/report/download/{report_id}")
 async def download_report(report_id: str):
     try:
-        # Try to find by Mongo ID first
+        # Find record in MongoDB
         record = None
         try:
             record = analysis_collection.find_one({"_id": ObjectId(report_id)})
         except:
             pass
-            
+
         if not record:
-            # If not found by ID, maybe it's a legacy session ID?
-            # For now, require Mongo ID (from History)
             raise HTTPException(status_code=404, detail="Analysis record not found")
 
-        # Check if PDF exists
-        pdf_path = f"reports/{report_id}.pdf"
-        
-        # If not, generate it
-        if not os.path.exists(pdf_path):
-            print(f"Generating PDF for {report_id}...")
-            # Ensure charts paths are correct (relative/absolute)
-            # stored in mongo: "charts/sales/cat_impact_....png" (no leading /) likely
-            # or "/charts/..." if via `generate_field_charts`
-            
-            # Sanitization of paths for backend usage
-            charts = record.get('charts', {})
-            clean_charts = {}
-            for k, v in charts.items():
-                clean_charts[k] = v.lstrip('/') # remove leading / for local file access
-                
-            generated_path = report_service.generate_pdf(record, clean_charts, report_id)
-            if not generated_path:
-                raise HTTPException(status_code=500, detail="PDF Generation Failed")
-        
-        return FileResponse(pdf_path, filename=f"Analytix_Report_{report_id}.pdf", media_type='application/pdf')
+        # Use absolute path — Render's filesystem is ephemeral, so ALWAYS regenerate.
+        # Never rely on a cached file existing across restarts.
+        pdf_path = os.path.join(REPORTS_DIR, f"{report_id}.pdf")
 
+        # Convert chart URL paths (e.g. '/charts/sales/foo.png') to
+        # absolute filesystem paths (e.g. '/app/backend/charts/sales/foo.png')
+        charts = record.get('charts', {})
+        clean_charts = {}
+        for k, v in charts.items():
+            relative = v.lstrip('/')          # strip leading /
+            abs_chart = os.path.join(BASE_DIR, relative)
+            clean_charts[k] = abs_chart       # always pass absolute path
+
+        generated_path = report_service.generate_pdf(record, clean_charts, report_id)
+        if not generated_path:
+            raise HTTPException(status_code=500, detail="PDF Generation Failed")
+
+        return FileResponse(
+            generated_path,
+            filename=f"Analytix_Report_{report_id}.pdf",
+            media_type='application/pdf'
+        )
+
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Download Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
- 
+
 
 
 @app.delete("/api/history/{item_id}")
@@ -593,58 +596,62 @@ async def custom_download_report(request: CustomReportRequest):
     try:
         # Find Record
         try:
-             record = analysis_collection.find_one({"_id": ObjectId(request.report_id)})
+            record = analysis_collection.find_one({"_id": ObjectId(request.report_id)})
         except:
-             record = None
-             
+            record = None
+
         if not record:
-             raise HTTPException(status_code=404, detail="Analysis record not found")
-        
-        # Modify Charts Logic (Absolute Paths)
+            raise HTTPException(status_code=404, detail="Analysis record not found")
+
+        # Build absolute chart paths, respecting user's chart-type preferences
         charts = record.get('charts', {})
         new_charts = {}
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        
+
         for k, v in charts.items():
-            # Remove leading slash if present (e.g. /charts/...)
-            base_rel_path = v.lstrip('/')
-            full_base_path = os.path.join(BASE_DIR, base_rel_path)
-            
-            # Default to base path (absolute)
-            final_path = full_base_path
-            
+            # Convert URL path → absolute filesystem path
+            base_rel_path   = v.lstrip('/')
+            full_base_path  = os.path.join(BASE_DIR, base_rel_path)
+            final_path      = full_base_path  # default
+
             if k in request.preferences:
-                 pref = request.preferences[k] # 'pie', 'line', 'bar'
-                 candidate = full_base_path # fallback
-                 
-                 if pref == 'pie':
-                      candidate = full_base_path.replace('.png', '_pie.png')
-                 elif pref == 'line':
-                      candidate = full_base_path.replace('.png', '_line.png')
-                 elif pref == 'bar':
-                      candidate = full_base_path.replace('.png', '_bar.png')
-                 
-                 if os.path.exists(candidate):
-                      final_path = candidate
-                 else:
-                      print(f"⚠️ Requested variant {pref} for {k} not found at {candidate}")
-            
-            # Store absolute path for PDF engine
+                pref = request.preferences[k]  # 'pie', 'line', or 'bar'
+                candidate = full_base_path
+                if pref == 'pie':
+                    candidate = full_base_path.replace('.png', '_pie.png')
+                elif pref == 'line':
+                    candidate = full_base_path.replace('.png', '_line.png')
+                elif pref == 'bar':
+                    candidate = full_base_path.replace('.png', '_bar.png')
+
+                if os.path.exists(candidate):
+                    final_path = candidate
+                else:
+                    print(f"Requested variant '{pref}' for '{k}' not found, using default")
+
             new_charts[k] = final_path
 
-        # Generate PDF with unique name
-        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        # Generate PDF with unique timestamped name
+        timestamp      = datetime.now().strftime("%Y%m%d%H%M%S")
         custom_filename = f"{request.report_id}_{timestamp}.pdf"
-        
-        generated_path = report_service.generate_pdf(record, new_charts, request.report_id, output_filename=custom_filename)
-        
-        if not generated_path:
-             raise HTTPException(status_code=500, detail="PDF Generation Failed")
-             
-        return FileResponse(generated_path, filename=f"Analytix_Report_{timestamp}.pdf", media_type='application/pdf')
 
+        generated_path = report_service.generate_pdf(
+            record, new_charts, request.report_id, output_filename=custom_filename
+        )
+
+        if not generated_path:
+            raise HTTPException(status_code=500, detail="PDF Generation Failed")
+
+        return FileResponse(
+            generated_path,
+            filename=f"Analytix_Report_{timestamp}.pdf",
+            media_type='application/pdf'
+        )
+
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Custom Download Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 

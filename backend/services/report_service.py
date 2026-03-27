@@ -3,6 +3,12 @@ from fpdf import FPDF
 import os
 from datetime import datetime
 
+# Absolute path to the backend directory — works on local AND Render
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # services/
+BASE_DIR = os.path.dirname(BASE_DIR)                   # backend/
+REPORTS_DIR = os.path.join(BASE_DIR, "reports")
+CHARTS_DIR  = os.path.join(BASE_DIR, "charts")
+
 class pdf(FPDF):
     def header(self):
         # Logo could go here
@@ -37,9 +43,28 @@ class ReportService:
         return text.encode('latin-1', 'replace').decode('latin-1')
 
     @staticmethod
+    def _resolve_chart_path(path):
+        """
+        Resolve chart path to an absolute filesystem path.
+        Charts are stored in mongo as '/charts/domain/file.png' (URL path).
+        We need to convert that to an absolute filesystem path.
+        """
+        if not path:
+            return None
+        # If already absolute and exists, use it directly
+        if os.path.isabs(path) and os.path.exists(path):
+            return path
+        # Strip leading slash and join with backend BASE_DIR
+        relative = path.lstrip('/')
+        abs_path = os.path.join(BASE_DIR, relative)
+        if os.path.exists(abs_path):
+            return abs_path
+        return None  # not found
+
+    @staticmethod
     def generate_pdf(data, charts, session_id, output_filename=None):
         try:
-            print(f"📄 Starting PDF Generation for {session_id}")
+            print(f"Starting PDF Generation for session: {session_id}")
             doc = pdf()
             doc.set_auto_page_break(auto=True, margin=15)
             doc.add_page()
@@ -182,45 +207,40 @@ class ReportService:
                 doc.ln(5)
                 
                 for name, path in charts.items():
-                    # clean path (absolute paths passed from main.py, or relative from legacy)
-                    # Fix for Linux environments: Don't strip leading slash if it's an absolute path
-                    if os.path.isabs(path):
-                        local_path = path
-                    else:
-                        local_path = path.lstrip('/')
-                    
-                    if os.path.exists(local_path):
-                        doc.set_font("Arial", 'B', 12)
-                        title = ReportService._clean_text(name.replace('_', ' ').title())
-                        doc.cell(0, 10, txt=title, ln=True)
+                    # Resolve to absolute filesystem path (works locally and on Render)
+                    local_path = ReportService._resolve_chart_path(path)
+                    chart_title = ReportService._clean_text(name.replace('_', ' ').title())
+
+                    doc.set_font("Arial", 'B', 12)
+                    doc.cell(0, 10, txt=chart_title, ln=True)
+
+                    if local_path:
                         try:
-                            # Adjust width so image doesn't overflow
-                            doc.image(local_path, x=15, w=170) 
-                            doc.ln(5) 
+                            doc.image(local_path, x=15, w=170)
+                            doc.ln(5)
                         except Exception as e:
-                            print(f"⚠️ PDF Image Error for {local_path}: {e}")
+                            print(f"PDF Image Error for {local_path}: {e}")
                             doc.set_font("Arial", 'I', 10)
-                            doc.cell(0, 10, txt=f"[Image Error: {e}]", ln=True)
+                            doc.set_text_color(150, 100, 0)
+                            doc.cell(0, 8, txt=f"[Chart render error: {str(e)[:80]}]", ln=True)
+                            doc.set_text_color(0)
                     else:
-                        print(f"⚠️ PDF Generator: Image not found at {local_path}")
-                        # Add Placeholder text
-                        doc.set_font("Arial", 'B', 12)
-                        title = ReportService._clean_text(name.replace('_', ' ').title())
-                        doc.cell(0, 10, txt=title, ln=True)
+                        # Chart image not on disk (ephemeral server — normal on Render after restart)
+                        print(f"Chart image not found on disk: {path} — skipping embed")
                         doc.set_font("Arial", 'I', 10)
-                        doc.set_text_color(255, 0, 0)
-                        doc.cell(0, 10, txt="[Image Not Found]", ln=True)
+                        doc.set_text_color(100, 100, 100)
+                        doc.cell(0, 8, txt="[Chart not available — re-upload your data to regenerate visuals]", ln=True)
                         doc.set_text_color(0)
 
-            # Save
-            os.makedirs("reports", exist_ok=True)
+            # Save to absolute path (works on local AND Render)
+            os.makedirs(REPORTS_DIR, exist_ok=True)
             if output_filename:
-                output_path = f"reports/{output_filename}"
+                output_path = os.path.join(REPORTS_DIR, output_filename)
             else:
-                output_path = f"reports/{session_id}.pdf"
-                
+                output_path = os.path.join(REPORTS_DIR, f"{session_id}.pdf")
+
             doc.output(output_path)
-            print(f"✅ PDF Generated Successfully: {output_path}")
+            print(f"PDF Generated: {output_path}")
             return output_path
             
         except Exception as e:
