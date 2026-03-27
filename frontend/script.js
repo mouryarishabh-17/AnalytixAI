@@ -1084,7 +1084,7 @@ async function sendChatMessage() {
 
     // Add user message to chat
     addChatMessage('user', message);
-    input.value = '';
+    input.value = ''; // Temporarily clear for 'feel'
 
     // Show loading
     const loadingId = addChatMessage('assistant', '💭 Thinking...');
@@ -1094,18 +1094,13 @@ async function sendChatMessage() {
         formData.append('session_id', currentSessionId);
         formData.append('message', message);
 
-        console.log('Sending chat message:', message);
-        console.log('Session ID:', currentSessionId);
-
         const response = await fetch(`${API_BASE_URL}/chat`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` },
             body: formData
         });
 
-        console.log('Chat response status:', response.status);
         const data = await response.json();
-        console.log('Chat response data:', data);
 
         // Remove loading message
         const loadingMsg = document.getElementById(loadingId);
@@ -1114,18 +1109,20 @@ async function sendChatMessage() {
         if (response.ok && data.response) {
             addChatMessage('assistant', data.response);
         } else {
-            // Show detailed error message
+            // Put message back in input if it failed so user doesn't lose it
+            input.value = message;
             const errorMsg = data.detail || data.message || 'Failed to get response';
-            console.error('Chat API error:', errorMsg);
             addChatMessage('assistant', `❌ ${errorMsg}`);
         }
     } catch (error) {
         console.error('Chat error:', error);
+        // Put message back in input
+        input.value = message;
+        
         const loadingMsg = document.getElementById(loadingId);
         if (loadingMsg) loadingMsg.remove();
 
-        // Show user-friendly error
-        addChatMessage('assistant', `❌ Connection error: ${error.message || 'Please try again.'}`);
+        addChatMessage('assistant', `❌ Connection error. Re-try in a moment.`);
     }
 }
 
