@@ -51,6 +51,25 @@ function switchTab(tabName) {
 
     // Update URL hash
     history.pushState({ tab: tabName }, '', `#${tabName}`);
+
+    // Initial Chat Greeting
+    if (tabName === 'chat') {
+        initChatGreeting();
+    }
+}
+
+let chatInitialized = false;
+function initChatGreeting() {
+    if (chatInitialized) return;
+    const chatMessages = document.getElementById('chat-messages');
+    if (!chatMessages) return;
+
+    // Only add greeting if chat is empty (or only has welcome div)
+    const messages = chatMessages.querySelectorAll('.chat-message');
+    if (messages.length === 0) {
+        addChatMessage('assistant', "Hi! I'm **AnalytixBot**, your AI data assistant. How can I help you today?");
+        chatInitialized = true;
+    }
 }
 
 // ============================================
@@ -492,10 +511,8 @@ async function analyzeData(customMapping = null) {
             displayResults(data);
             switchTab('analytics');
 
-            // Automatically get data overview for chat
-            if (currentSessionId) {
-                await getDataOverview(currentSessionId);
-            }
+            // REMOVED: Automatically get data overview for chat
+            // User requested that chat should only respond when Asked.
         } else if (response.status === 401) {
             alert('🔒 Your session has expired. Please login again.');
             handleLogout(); // Force logout to clear invalid token
@@ -1054,7 +1071,7 @@ async function sendChatMessage() {
 
     if (!message || !currentSessionId) {
         if (!currentSessionId) {
-            alert('Please upload a file first to start chatting about your data.');
+            addChatMessage('assistant', "I'm ready to help! Please go to the **Data Sources** tab and upload a file first so I can analyze your data.");
         }
         return;
     }
