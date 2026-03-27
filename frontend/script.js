@@ -1135,38 +1135,35 @@ function addChatMessage(role, content) {
     messageDiv.id = messageId;
     messageDiv.className = `chat-message ${role}-message`;
 
-    // Format content (Basic Markdown to HTML)
+    // Format content using 'marked' library if available (preferred)
+    // fallback to basic formatting if marked not found
     let formatted = content || '';
-
-    // 1. Bold (**text**)
-    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-
-    // 2. Lists (- item) -> <li>item</li>
-    if (formatted.includes('\n- ') || formatted.includes('\n* ')) {
-        const lines = formatted.split('\n');
-        let inList = false;
-        let finalHtml = '';
-
-        lines.forEach(line => {
-            const trimmed = line.trim();
-            if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-                if (!inList) {
-                    finalHtml += '<ul>';
-                    inList = true;
-                }
-                finalHtml += `<li>${trimmed.substring(2)}</li>`;
-            } else {
-                if (inList) {
-                    finalHtml += '</ul>';
-                    inList = false;
-                }
-                finalHtml += line + '<br>';
-            }
-        });
-        if (inList) finalHtml += '</ul>';
-        formatted = finalHtml;
+    
+    if (typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+        formatted = marked.parse(formatted);
     } else {
-        formatted = formatted.replace(/\n/g, '<br>');
+        // Fallback: Bold (**text**)
+        formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+        // Fallback: Lists (- item) -> <li>item</li>
+        if (formatted.includes('\n- ') || formatted.includes('\n* ')) {
+            const lines = formatted.split('\n');
+            let inList = false;
+            let finalHtml = '';
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+                    if (!inList) { finalHtml += '<ul>'; inList = true; }
+                    finalHtml += `<li>${trimmed.substring(2)}</li>`;
+                } else {
+                    if (inList) { finalHtml += '</ul>'; inList = false; }
+                    finalHtml += line + '<br>';
+                }
+            });
+            if (inList) finalHtml += '</ul>';
+            formatted = finalHtml;
+        } else {
+            formatted = formatted.replace(/\n/g, '<br>');
+        }
     }
 
     if (role === 'user') {
