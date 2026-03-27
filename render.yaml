@@ -5,3 +5,28 @@ services:
     rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    # All env vars below must be set in Render Dashboard -> Environment tab.
+    # They are listed here for documentation only (values are NOT stored here).
+    envVars:
+      - key: MONGO_URL
+        sync: false          # Set manually in Render Dashboard
+      - key: DB_NAME
+        value: analytixai
+      - key: SECRET_KEY
+        sync: false          # Set manually in Render Dashboard
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "10080"
+      - key: GEMINI_API_KEY_1
+        sync: false          # Set manually in Render Dashboard
+      - key: GEMINI_API_KEY_2
+        sync: false
+      - key: GEMINI_API_KEY_3
+        sync: false
+      - key: GEMINI_API_KEY_4
+        sync: false
+      - key: GEMINI_API_KEY_5
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: "*"

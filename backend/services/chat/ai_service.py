@@ -28,26 +28,39 @@ class APIKeyRotator:
         self.block1_indices = [i for i in range(self.total_keys)]
 
     def _load_api_keys(self) -> List[str]:
-        """Load all API keys from .env file directly"""
+        """
+        Load all API keys.
+        Priority: os.environ (Render/cloud platform env vars) > .env file (local dev)
+        
+        IMPORTANT: dotenv_values() only reads the .env FILE and ignores real
+        environment variables set by Render or any cloud hosting platform.
+        We must use os.environ (which load_dotenv() already merges .env into)
+        so that both local and deployed environments work correctly.
+        """
         keys = []
         
-        # Load values directly from .env to ignore stale process environment variables
-        env_vars = dotenv_values()
-        
+        # os.environ contains BOTH real platform env vars (Render) AND
+        # local .env values merged by load_dotenv() at the top of this file.
+        # This is the correct source for all environments.
+        env_vars = os.environ
+
         # Load primary key
         primary_key = env_vars.get("GEMINI_API_KEY")
         if primary_key and primary_key != "YOUR_GEMINI_API_KEY_HERE":
             keys.append(primary_key)
         
-        # Load additional keys (GEMINI_API_KEY_1, GEMINI_API_KEY_2, etc.)
-        for i in range(1, 11):  # Support up to 10 keys
+        # Load additional keys (GEMINI_API_KEY_1 through GEMINI_API_KEY_10)
+        for i in range(1, 11):
             key = env_vars.get(f"GEMINI_API_KEY_{i}")
             if key and key != "YOUR_GEMINI_API_KEY_HERE":
                 keys.append(key)
         
         if not keys:
-            print("⚠️  WARNING: No Gemini API keys configured!")
-            print("   Get your FREE API keys from: https://aistudio.google.com/app/apikey")
+            print("WARNING: No Gemini API keys found in environment!")
+            print("  -> On Render: Add GEMINI_API_KEY_1 ... in the Environment tab")
+            print("  -> Locally  : Add them to backend/.env")
+        else:
+            print(f"Loaded {len(keys)} Gemini API key(s) from environment")
         
         return keys
     
