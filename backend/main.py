@@ -65,11 +65,19 @@ ALLOWED_DOMAINS = ['sales', 'finance', 'student', 'employee']
 REQUIRED_COLUMNS = {
     'sales': {
         'amount': ['amount', 'sales', 'revenue', 'price', 'value'],
-        'date': ['date', 'time', 'year', 'month']
+        'date': ['order date', 'date', 'time', 'year', 'month']
     },
     'finance': {
         'amount': ['amount', 'income', 'expense', 'cost', 'profit', 'revenue', 'budget'],
         'date': ['date', 'time', 'period', 'year', 'month']
+    },
+    'student': {
+        'performance': ['score', 'grade', 'stress', 'performance', 'mark', 'result'],
+        'factors': ['study', 'hours', 'practice', 'prep']
+    },
+    'employee': {
+        'retention': ['attrition', 'resigned', 'left', 'status', 'retention'],
+        'performance': ['performance', 'rating', 'satisfaction', 'promotion']
     }
 }
 

@@ -26,7 +26,36 @@ def generate_employee_charts(df):
     exp_order = ['Less than 1', '1 to 3', '3 to 5', 'More than 5']
     age_order = ['18-25', '26-30', 'Above 30']
     
-    # 1. WORK EXPERIENCE (Bar Chart for Categories)
+    # 1. ATTRITION / RETENTION (Pie Chart)
+    attrib_col = next((c for c in df.columns if any(k in c.lower() for k in ['attrition', 'left', 'status', 'resigned'])), None)
+    if attrib_col:
+        try:
+            plt.figure(figsize=(10, 6))
+            counts = df[attrib_col].value_counts()
+            plt.pie(counts, labels=counts.index, autopct='%1.1f%%', colors=['#DA70D6', '#BA55D3'])
+            plt.title("ATTRITION OVERVIEW", fontweight='bold', color='white')
+            path = "charts/employee/attrition_pie.png"
+            plt.tight_layout()
+            plt.savefig(path, facecolor='#1e1e2f')
+            plt.close()
+            charts['attrition_rate'] = path
+        except: plt.close()
+
+    # 2. MONTHLY INCOME / SALARY (Histogram)
+    inc_col = next((c for c in df.columns if any(k in c.lower() for k in ['income', 'salary', 'monthlyincome'])), None)
+    if inc_col:
+        try:
+            plt.figure(figsize=(10, 6))
+            sns.histplot(df[inc_col], kde=True, color='#00FF00')
+            plt.title("INCOME DISTRIBUTION", fontweight='bold', color='#00FF00')
+            path = "charts/employee/income_dist.png"
+            plt.tight_layout()
+            plt.savefig(path, facecolor='#1e1e2f')
+            plt.close()
+            charts['income_distribution'] = path
+        except: plt.close()
+
+    # 3. WORK EXPERIENCE (Fallback)
     col = next((c for c in df.columns if any(k in c.lower() for k in ['experience', 'years'])), None)
     if col:
         plt.figure(figsize=(10, 6))

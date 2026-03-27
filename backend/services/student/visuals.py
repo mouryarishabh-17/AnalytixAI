@@ -26,9 +26,23 @@ def generate_student_charts(df):
     study_order = ['Less than 2', '2 to 4', '4 to 6', 'More than 6']
     screen_order = ['Less than 2', '2 to 4', '4 to 6', 'More than 6']
     
-    # 1. DAILY STUDY HOURS (Bar Chart for Categories)
-    col = next((c for c in df.columns if 'study' in c.lower()), None)
-    if col:
+    # 1. ACADEMIC PERFORMANCE (Histogram for Scores)
+    score_col = next((c for c in df.columns if any(k in c.lower() for k in ['math', 'reading', 'writing', 'score'])), None)
+    if score_col:
+        plt.figure(figsize=(10, 6))
+        sns.histplot(df[score_col], kde=True, color=student_color)
+        plt.title(f"{score_col.upper()} DISTRIBUTION", fontweight='bold', color='#2F4F4F')
+        plt.xlabel("Score")
+        plt.ylabel("Frequency")
+        plt.tight_layout()
+        path = f"charts/student/dist_{score_col.replace(' ', '_')}.png"
+        plt.savefig(path)
+        plt.close()
+        charts['Academic_Performance'] = path
+
+    # 2. STUDY/SCREEN PATTERNS (Fallback to generic if missing)
+    study_col = next((c for c in df.columns if 'study' in c.lower()), None)
+    if study_col:
         plt.figure(figsize=(10, 6))
         
         # Check if numeric or categorical

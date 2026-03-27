@@ -112,6 +112,9 @@ class FieldService:
         from services.student.cleaning import clean_student_data
         from services.employee.cleaning import clean_employee_data
 
+        # 0. HEADER CLEANING: Strip quotes and spaces from all column names
+        df.columns = [c.strip().replace('"', '').replace("'", "") for c in df.columns]
+
         try:
             # 1. ROBUST QUANTIZATION: Clean currency, %, and commas for ALL columns
             for col in df.columns:
